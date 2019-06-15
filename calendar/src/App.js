@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import $ from 'jquery';
+// import $ from 'jquery';
 
 
 class App extends React.Component { 
@@ -15,12 +15,17 @@ class App extends React.Component {
     };
   }
 
-  handleEntry(){
-    let input = $('#txtEnter').val();
+  handleEntry(input){
+    // let input = String(inputIn);
+
+    console.log(input);
+
     const nOfTasks = this.state.numberOfTasks;
     const next = this.state.nextTaskNumber;
 
-    if (input.length <= 0) {input = "task"};
+    if (input.length <= 0) {
+      input = "task";
+    };
 
     this.setState({
       tasks: this.state.tasks.concat([{
@@ -41,7 +46,7 @@ class App extends React.Component {
     let counter = 0;
 
     while(!found){
-      if (tasks[counter].n == i) {
+      if (tasks[counter].n === i) {
         found=true;
       }else {
         counter++;
@@ -52,9 +57,7 @@ class App extends React.Component {
       alert("Something went really wrong. Sorry Dude.");
     };
 
-
-    let newTasks = tasks.splice(counter,1);
-
+    tasks.splice(counter,1);
   
     this.setState({
       tasks: tasks,
@@ -67,13 +70,14 @@ class App extends React.Component {
   //App render
   render(){
     return (
-      <div>
-        <TaskEntry onClick={() => this.handleEntry()} idGiven="btnEnter" idText="txtEnter" />
+      <div id="taskList">
+        <TaskEntry onClick={(input) => this.handleEntry(input)} idGiven="btnEnter" idText="txtEnter" />
 
         <p>{this.state.numberOfTasks}</p>
         {this.state.tasks.map(
           (task, i) => <Task key={i} theTask={task} onDelete={() => this.handleDelete(task.n)} />
-        )}        
+        )}
+
       </div>
     );
   }
@@ -82,7 +86,7 @@ class App extends React.Component {
 
 function Task(props){
   return(
-    <div key={props.key}>
+    <div>
 
       <p> 
         {props.theTask.t} {props.theTask.n}        
@@ -94,14 +98,46 @@ function Task(props){
   );
 }
 
-function TaskEntry(props){
-  return(
-    <div>
-      <input type="text" id={props.idText} /><br/>
-      <button className="entryButton" onClick={props.onClick} id={props.idGiven}>Enter</button>
-    </div>
-  );
+class TaskEntry extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {value: ''};
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event){
+    this.setState({value:event.target.value});
+  }
+
+  handleSubmit(event){
+    event.preventDefault();
+
+
+    // console.log("I " + this.state.value);
+    this.props.onClick(this.state.value);
+  }
+
+  render(){
+    return(
+      <form onSubmit={this.handleSubmit}>
+        <input type="text" value={this.state.value} onChange={this.handleChange} /><br/>
+        <input type="submit" value="Enter" />
+      </form>
+    );
+  }
+
 }
+
+// function TaskEntry(props){
+//   return(
+//     <div>
+//       <input type="text" id={props.idText} /><br/>
+//       <button className="entryButton" onClick={props.onClick} id={props.idGiven}>Enter</button>
+//     </div>
+//   );
+// }
 
 
 
